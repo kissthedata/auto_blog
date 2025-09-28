@@ -6,7 +6,9 @@
       "Bash(npm init:*)",
       "Bash(npm install:*)",
       "Bash(npx playwright:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(start index.html)",
+      "Bash(del:*)"
     ],
     "deny": [],
     "ask": []
