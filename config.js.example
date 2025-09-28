@@ -1,0 +1,16 @@
+// 환경 변수 설정 템플릿
+// 이 파일을 config.js로 복사하고 실제 API 키를 입력하세요
+const config = {
+    supabase: {
+        url: 'YOUR_SUPABASE_URL_HERE',
+        anonKey: 'YOUR_SUPABASE_ANON_KEY_HERE'
+    },
+    googleVisionKey: 'YOUR_GOOGLE_VISION_API_KEY_HERE',
+    openaiKey: 'YOUR_OPENAI_API_KEY_HERE',
+    maxImages: 10,
+    maxFileSizeMB: 10
+};
+
+// Supabase 클라이언트 초기화
+const { createClient } = supabase;
+const supabaseClient = createClient(config.supabase.url, config.supabase.anonKey);

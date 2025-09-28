@@ -8,7 +8,10 @@
       "Bash(npx playwright:*)",
       "Bash(node:*)",
       "Bash(start index.html)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

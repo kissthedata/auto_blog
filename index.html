@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 책 서평 AI - 사진으로 서평 자동 생성</title>
+    <title>책 서평 AI - 사진으로 서평 자동 생성</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #d5eaf0;
             min-height: 100vh;
             color: #333;
         }
@@ -56,6 +56,111 @@
             flex: 1;
         }
 
+        .book-title-section {
+            margin-bottom: 40px;
+        }
+
+        .book-title-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .book-title-input {
+            flex: 1;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .book-title-input:focus {
+            outline: none;
+            border-color: #4a9bb8;
+            box-shadow: 0 0 0 3px rgba(74, 155, 184, 0.1);
+        }
+
+        .search-book-btn {
+            padding: 16px 24px;
+            background: #4a9bb8;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .search-book-btn:hover {
+            background: #3e8ca8;
+            transform: translateY(-1px);
+        }
+
+        .search-book-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .book-info {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .book-details {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .book-cover {
+            width: 120px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .book-meta {
+            flex: 1;
+        }
+
+        .book-meta h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .book-meta p {
+            margin-bottom: 8px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+
+        .book-author {
+            font-weight: 600;
+            color: #4a9bb8 !important;
+        }
+
+        .book-publisher {
+            font-size: 0.9rem;
+            color: #718096 !important;
+        }
+
+        .book-description {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+
         .upload-section {
             margin-bottom: 40px;
         }
@@ -74,24 +179,24 @@
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
-            background: linear-gradient(45deg, #f7fafc, #edf2f7);
+            background: #f7fafc;
         }
 
         .upload-area:hover {
-            border-color: #667eea;
-            background: linear-gradient(45deg, #edf2f7, #e2e8f0);
+            border-color: #d5eaf0;
+            background: #edf2f7;
             transform: translateY(-2px);
         }
 
         .upload-area.drag-over {
-            border-color: #667eea;
-            background: linear-gradient(45deg, #ebf4ff, #dbeafe);
+            border-color: #d5eaf0;
+            background: #ebf4ff;
         }
 
         .upload-icon {
             font-size: 3rem;
             margin-bottom: 16px;
-            color: #667eea;
+            color: #4a9bb8;
         }
 
         .upload-text {
@@ -146,8 +251,123 @@
             font-size: 14px;
         }
 
+        .compression-status {
+            background: #d5eaf0;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .compression-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .compression-text {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .compression-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4a9bb8;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #667eea;
+            min-width: 40px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
         .prompt-section {
             margin-bottom: 40px;
+        }
+
+        .role-buttons {
+            margin-bottom: 30px;
+        }
+
+        .role-category {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 20px 0 12px 0;
+            color: #4a5568;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .role-btn {
+            padding: 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            background: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .role-btn:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+            transform: translateY(-1px);
+        }
+
+        .role-btn.active {
+            background: #4a9bb8;
+            color: white;
+            border-color: #4a9bb8;
+            box-shadow: 0 4px 12px rgba(74, 155, 184, 0.3);
+        }
+
+        .selected-role {
+            background: #f7fafc;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .additional-prompt h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
         }
 
         .prompt-input {
@@ -170,7 +390,7 @@
         .generate-btn {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4a9bb8;
             color: white;
             border: none;
             border-radius: 12px;
@@ -182,8 +402,9 @@
         }
 
         .generate-btn:hover {
+            background: #3e8ca8;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(74, 155, 184, 0.3);
         }
 
         .generate-btn:disabled {
@@ -212,19 +433,231 @@
             display: none;
         }
 
-        .result-editor {
-            width: 100%;
+        .result-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .result-content {
+            flex: 1;
             min-height: 400px;
             padding: 20px;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
             font-size: 1rem;
             line-height: 1.6;
-            resize: vertical;
+            background: white;
+            overflow-y: auto;
+            max-height: 800px;
+        }
+
+        .image-controls {
+            width: 200px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 800px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .image-controls h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #4a5568;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .image-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .image-control-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f7fafc;
+        }
+
+        .image-control-item img {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .image-control-item .image-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .image-control-item .copy-image-btn-small {
+            padding: 6px 12px;
+            background: #4a9bb8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .image-control-item .copy-image-btn-small:hover {
+            background: #3e8ca8;
+            transform: translateY(-1px);
+        }
+
+        .result-content h1, .result-content h2, .result-content h3 {
+            color: #2d3748;
+            margin: 20px 0 10px 0;
+        }
+
+        .result-content h1 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .result-content h2 {
+            font-size: 1.4rem;
+            color: #667eea;
+        }
+
+        .result-content h3 {
+            font-size: 1.2rem;
+        }
+
+        .result-content blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 16px;
+            margin: 16px 0;
+            font-style: italic;
+            color: #4a5568;
+            background: #f7fafc;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .result-content strong {
+            color: #2d3748;
+            font-weight: 700;
+        }
+
+        .result-content .image-placeholder-section {
+            margin: 20px 0;
+            padding: 16px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            background: #d5eaf0;
+        }
+
+        .result-content .image-preview-small {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .result-content .image-preview-small img {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-content .copy-image-btn {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .result-content .copy-image-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .result-content .copy-image-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-content .placeholder-text {
+            font-size: 1rem;
+            color: #4a5568;
+            text-align: center;
+            padding: 8px;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-content .placeholder-text strong {
+            color: #667eea;
+        }
+
+        .result-content .section {
+            margin: 24px 0;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .result-content .section.highlight {
+            background: #d5eaf0;
+            border-left: 4px solid #4a9bb8;
+        }
+
+        .result-content ul, .result-content ol {
+            padding-left: 24px;
+            margin: 12px 0;
+        }
+
+        .result-content li {
+            margin: 8px 0;
+        }
+
+        .result-content .rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 12px 0;
+        }
+
+        .copy-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
         }
 
         .copy-btn {
-            margin-top: 16px;
             padding: 12px 24px;
             background: #48bb78;
             color: white;
@@ -233,11 +666,39 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            flex: 1;
+            min-width: 160px;
         }
 
         .copy-btn:hover {
             background: #38a169;
             transform: translateY(-1px);
+        }
+
+        .download-btn {
+            background: #667eea;
+        }
+
+        .download-btn:hover {
+            background: #5a67d8;
+        }
+
+        .copy-notice {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .copy-notice p {
+            margin: 4px 0;
+            color: #4a5568;
+        }
+
+        .copy-notice strong {
+            color: #2d3748;
         }
 
         @keyframes fadeInDown {
@@ -292,41 +753,140 @@
             .upload-area {
                 padding: 40px 20px;
             }
+
+            .result-container {
+                flex-direction: column;
+            }
+
+            .image-controls {
+                width: 100%;
+                order: -1;
+            }
+
+            .image-list {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .image-control-item {
+                flex-shrink: 0;
+                min-width: 120px;
+            }
+
+            .book-title-input-group {
+                flex-direction: column;
+            }
+
+            .book-details {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .book-cover {
+                align-self: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📚 책 서평 AI</h1>
+            <h1>책 서평 AI</h1>
             <p>책 사진을 올리면 AI가 멋진 서평을 작성해드려요</p>
         </div>
 
         <div class="main-card">
+            <!-- 책 제목 입력 섹션 -->
+            <div class="book-title-section">
+                <h2 class="section-title">책 제목 입력</h2>
+                <div class="book-title-input-group">
+                    <input type="text" id="bookTitleInput" class="book-title-input" placeholder="책 제목을 입력해주세요">
+                    <button class="search-book-btn" id="searchBookBtn">책 정보 검색</button>
+                </div>
+                <div class="book-info" id="bookInfo" style="display: none;">
+                    <div class="book-details">
+                        <img class="book-cover" id="bookCover" src="" alt="책 표지">
+                        <div class="book-meta">
+                            <h3 class="book-title" id="bookTitle"></h3>
+                            <p class="book-author" id="bookAuthor"></p>
+                            <p class="book-publisher" id="bookPublisher"></p>
+                            <p class="book-description" id="bookDescription"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 사진 업로드 섹션 -->
             <div class="upload-section">
-                <h2 class="section-title">📷 책 사진 업로드 (최대 5장)</h2>
+                <h2 class="section-title">책 사진 업로드 (최대 10장)</h2>
                 <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">📚</div>
+                    <div class="upload-icon">+</div>
                     <div class="upload-text">사진을 드래그하거나 클릭해주세요</div>
-                    <div class="upload-subtext">JPG, PNG 파일 지원</div>
+                    <div class="upload-subtext">JPG, PNG 파일 지원 (자동 압축됨)</div>
                 </div>
                 <input type="file" id="fileInput" class="file-input" multiple accept="image/*">
+
+                <!-- 압축 진행 상황 표시 -->
+                <div class="compression-status" id="compressionStatus" style="display: none;">
+                    <div class="compression-icon">압축</div>
+                    <div class="compression-text">이미지 압축 중...</div>
+                    <div class="compression-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                </div>
+
                 <div class="image-preview" id="imagePreview"></div>
             </div>
 
             <!-- 프롬프트 섹션 -->
             <div class="prompt-section">
-                <h2 class="section-title">✍️ 서평 스타일 (선택사항)</h2>
-                <textarea
-                    class="prompt-input"
-                    id="promptInput"
-                    placeholder="어떤 느낌으로 서평을 써주면 좋을까요? (예: 친근하고 재미있게, 전문적이고 분석적으로, 감성적으로 등)"
-                ></textarea>
+                <h2 class="section-title">서평 스타일 선택</h2>
+
+                <!-- 역할별 버튼 -->
+                <div class="role-buttons">
+                    <h3 class="role-category">독서 관련</h3>
+                    <div class="button-group">
+                        <button class="role-btn" data-role="reviewer" data-category="reading">전문 서평가</button>
+                        <button class="role-btn" data-role="blogger" data-category="reading">북블로거</button>
+                        <button class="role-btn" data-role="bookclub" data-category="reading">독서모임 리더</button>
+                        <button class="role-btn" data-role="booktuber" data-category="reading">북튜버</button>
+                    </div>
+
+                    <h3 class="role-category">직업별 관점</h3>
+                    <div class="button-group">
+                        <button class="role-btn" data-role="worker" data-category="job">직장인</button>
+                        <button class="role-btn" data-role="student" data-category="job">학생</button>
+                        <button class="role-btn" data-role="teacher" data-category="job">교육자</button>
+                        <button class="role-btn" data-role="entrepreneur" data-category="job">창업가</button>
+                    </div>
+
+                    <h3 class="role-category">콘텐츠 스타일</h3>
+                    <div class="button-group">
+                        <button class="role-btn" data-role="influencer" data-category="style">인플루언서</button>
+                        <button class="role-btn" data-role="journalist" data-category="style">기자</button>
+                        <button class="role-btn" data-role="entertainer" data-category="style">엔터테이너</button>
+                        <button class="role-btn" data-role="healer" data-category="style">힐링 에세이스트</button>
+                    </div>
+                </div>
+
+
+                <!-- 추가 요청사항 입력 -->
+                <div class="additional-prompt">
+                    <h3>추가 요청사항 (선택사항)</h3>
+                    <textarea
+                        class="prompt-input"
+                        id="promptInput"
+                        placeholder="추가로 요청하고 싶은 스타일이나 내용이 있다면 적어주세요..."
+                    ></textarea>
+                </div>
             </div>
 
             <!-- 생성 버튼 -->
-            <button class="generate-btn" id="generateBtn">🚀 AI 서평 생성하기</button>
+            <button class="generate-btn" id="generateBtn">AI 서평 생성하기</button>
 
             <!-- 로딩 -->
             <div class="loading" id="loading">
@@ -336,13 +896,23 @@
 
             <!-- 결과 섹션 -->
             <div class="result-section" id="resultSection">
-                <h2 class="section-title">✨ 생성된 서평</h2>
-                <textarea class="result-editor" id="resultEditor" readonly></textarea>
-                <button class="copy-btn" id="copyBtn">📋 복사하기</button>
+                <h2 class="section-title">생성된 서평</h2>
+                <div class="result-container">
+                    <div class="result-content" id="resultContent"></div>
+                    <div class="image-controls" id="imageControls" style="display: none;">
+                        <h3>이미지 관리</h3>
+                        <div class="image-list" id="imageList"></div>
+                    </div>
+                </div>
+                <div class="copy-buttons">
+                    <button class="copy-btn" id="copyTextBtn">텍스트만 복사</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
