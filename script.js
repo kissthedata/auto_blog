@@ -89,9 +89,8 @@ class BookReviewAI {
         searchBtn.textContent = '검색 중...';
 
         try {
-            // 네이버 검색 API 호출 (서버에서 프록시를 통해 호출해야 함)
-            // 여기서는 메이브 API를 사용하는 예시를 보여줍니다
-            const response = await this.callNaverBookAPI(query);
+            // 카카오 책 검색 API 호출
+            const response = await this.callKakaoBookAPI(query);
 
             if (response && response.items && response.items.length > 0) {
                 const book = response.items[0]; // 첫 번째 결과 사용
@@ -123,67 +122,28 @@ class BookReviewAI {
         }
     }
 
-    async callNaverBookAPI(query) {
-        // 방법 1: 백엔드 API를 통한 호출 (권장)
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            try {
-                const response = await fetch('/api/naver-book-search', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query })
-                });
+    async callKakaoBookAPI(query) {
+        console.log('카카오 API로 책 검색 중:', query);
 
-                if (response.ok) {
-                    return await response.json();
-                }
-            } catch (error) {
-                console.log('백엔드 API 호출 실패, 더미 데이터 사용:', error);
-            }
-        }
-
-        // 방법 2: 직접 API 호출 (CORS 프록시 사용 또는 로컬 개발용)
         try {
-            // CORS 프록시를 사용하거나 브라우저 확장 프로그램으로 CORS를 우회해야 함
-            // 실제 운영에서는 백엔드를 통해 호출해야 함
+            const response = await fetch('/api/kakao-book-search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            });
 
-            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-            const naverApiUrl = 'https://openapi.naver.com/v1/search/book.json';
-
-            if (config.naver && config.naver.clientId && config.naver.clientSecret) {
-                const response = await fetch(corsProxy + naverApiUrl + '?query=' + encodeURIComponent(query) + '&display=5', {
-                    method: 'GET',
-                    headers: {
-                        'X-Naver-Client-Id': config.naver.clientId,
-                        'X-Naver-Client-Secret': config.naver.clientSecret,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('네이버 API 호출 성공:', data);
-                    return data;
-                }
+            if (response.ok) {
+                const data = await response.json();
+                console.log('카카오 API 호출 성공:', data);
+                return data;
+            } else {
+                console.error('카카오 API 호출 실패:', response.status);
+                return { items: [] };
             }
         } catch (error) {
-            console.log('직접 API 호출 실패:', error);
+            console.error('카카오 API 호출 오류:', error);
+            return { items: [] };
         }
-
-        // 방법 3: 더미 데이터 반환 (개발용)
-        console.log('더미 데이터 사용 중...');
-        await this.sleep(1000); // 비동기 처리 시뮬레이션
-
-        return {
-            items: [{
-                title: query + " (더미 데이터)",
-                author: "김작가",
-                publisher: "예시출판사",
-                description: "이 책은 " + query + "에 대한 훌륭한 도서입니다. 많은 독자들에게 사랑받고 있으며, 심도 있는 내용과 유익한 정보를 담고 있습니다.",
-                image: "https://via.placeholder.com/120x160/4a9bb8/ffffff?text=Book",
-                pubdate: "20240101",
-                isbn: "1234567890123"
-            }]
-        };
     }
 
     cleanHtmlTags(text) {
@@ -501,17 +461,8 @@ class BookReviewAI {
         } catch (error) {
             console.error('OCR 처리 중 오류:', error);
 
-            // 오류 발생 시 더미 데이터 반환
-            return this.uploadedImages.map((img, index) => ({
-                imageData: img,
-                text: [
-                    "책 제목: 홈 사피엔스\n저자: 유발 하라리\n출판사: 김영사",
-                    "목차\n1부 인지혁명\n2부 농업혁명\n3부 인류의 통합\n4부 과학혁명",
-                    "인간이 다른 동물과 차별화되는 점은 바로 '상상의 산물'을 믿는 능력이다.",
-                    "저자 소개\n유발 하라리는 역사학자이자 철학자로 예루살렘 히브리 대학교 교수이다."
-                ][index] || "책의 내용 중 일부입니다.",
-                section: ['intro', 'structure', 'content', 'conclusion'][index] || 'content'
-            }));
+            // OCR 처리 실패 시 빈 텍스트 반환
+            throw error;
         }
     }
 
@@ -850,7 +801,7 @@ ${this.generateNaturalText(sectionData.conclusion, 'conclusion')}
 
 ${userPrompt ? `특히 ${userPrompt}한 관점에서 보면 더욱 의미있는 내용일 것 같아요.` : ''}
 
-*현재 API 연결에 문제가 있어 임시 서평을 표시했습니다.*
+*API 연결에 문제가 있습니다. 카카오 검색 API나 Google Vision API 키를 확인해주세요.*
 
 ---
 

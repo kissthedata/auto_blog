@@ -4,7 +4,7 @@ const config = {
     googleVisionKey: 'YOUR_GOOGLE_VISION_API_KEY_HERE',
     openaiKey: 'YOUR_OPENAI_API_KEY_HERE',
     kakao: {
-        restApiKey: 'YOUR_KAKAO_REST_API_KEY_HERE'
+        restApiKey: '974cb2444dbb3a879fa4cf921370c9c8'
     },
     maxImages: 10,
     maxFileSizeMB: 10
