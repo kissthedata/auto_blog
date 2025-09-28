@@ -15,10 +15,26 @@
    - **Google Vision API 키**: 이미지 OCR 처리용
    - **OpenAI API 키**: AI 서평 생성용
    - **Supabase URL & Key**: 데이터베이스 연동용
+   - **네이버 검색 API**: 책 정보 검색용
+     - [네이버 개발자 센터](https://developers.naver.com/)에서 애플리케이션 등록
+     - 검색 API 선택 후 Client ID, Client Secret 발급
 
 3. **의존성 설치**
    ```bash
    npm install
+   ```
+
+4. **서버 실행 (선택사항)**
+   네이버 API를 사용하려면 백엔드 서버가 필요합니다:
+   ```bash
+   # server.js.example을 server.js로 복사
+   cp server.js.example server.js
+
+   # 서버 의존성 설치
+   npm install express cors node-fetch@2
+
+   # 서버 실행
+   node server.js
    ```
 
 ## 보안 주의사항

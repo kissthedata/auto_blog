@@ -6,6 +6,7 @@
 
 # API 키가 포함된 설정 파일
 config.js
+server.js
 
 # Node modules
 node_modules/

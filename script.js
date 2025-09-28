@@ -124,19 +124,54 @@ class BookReviewAI {
     }
 
     async callNaverBookAPI(query) {
-        // 실제 프록션에서는 서버에서 API를 호출해야 합니다.
-        // 여기서는 더미 데이터를 반환합니다.
+        // 방법 1: 백엔드 API를 통한 호출 (권장)
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            try {
+                const response = await fetch('/api/naver-book-search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
 
-        // 실제 구현 예시:
-        // const response = await fetch('/api/naver-book-search', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ query })
-        // });
-        // return await response.json();
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                console.log('백엔드 API 호출 실패, 더미 데이터 사용:', error);
+            }
+        }
 
-        // 더미 데이터 반환
-        await this.sleep(1000); // 비동기 처리 시뮤레이션
+        // 방법 2: 직접 API 호출 (CORS 프록시 사용 또는 로컬 개발용)
+        try {
+            // CORS 프록시를 사용하거나 브라우저 확장 프로그램으로 CORS를 우회해야 함
+            // 실제 운영에서는 백엔드를 통해 호출해야 함
+
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const naverApiUrl = 'https://openapi.naver.com/v1/search/book.json';
+
+            if (config.naver && config.naver.clientId && config.naver.clientSecret) {
+                const response = await fetch(corsProxy + naverApiUrl + '?query=' + encodeURIComponent(query) + '&display=5', {
+                    method: 'GET',
+                    headers: {
+                        'X-Naver-Client-Id': config.naver.clientId,
+                        'X-Naver-Client-Secret': config.naver.clientSecret,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('네이버 API 호출 성공:', data);
+                    return data;
+                }
+            }
+        } catch (error) {
+            console.log('직접 API 호출 실패:', error);
+        }
+
+        // 방법 3: 더미 데이터 반환 (개발용)
+        console.log('더미 데이터 사용 중...');
+        await this.sleep(1000); // 비동기 처리 시뮬레이션
 
         return {
             items: [{
@@ -518,6 +553,20 @@ class BookReviewAI {
             // 섹션별로 이미지와 텍스트 그룹핑
             const sectionData = this.groupImagesBySection(imageDataWithTexts);
 
+            // 책 정보가 있으면 추가
+            let bookInfoPrompt = '';
+            if (this.bookInfo) {
+                bookInfoPrompt = `
+
+검색된 책 정보:
+- 제목: ${this.bookInfo.title}
+- 저자: ${this.bookInfo.author}
+- 출판사: ${this.bookInfo.publisher}
+- 설명: ${this.bookInfo.description}
+- 출간일: ${this.bookInfo.pubdate}
+이 정보를 참조하여 더 정확하고 구체적인 서평을 작성해주세요.`;
+            }
+
             const systemPrompt = `${rolePrompt}
 
 서평 작성 가이드라인:
@@ -533,6 +582,7 @@ class BookReviewAI {
 - 이모지 적절히 활용
 - 마지막에 --- 구분선 후 해시태그 포함
 - 각 섹션에 [IMAGE_PLACEHOLDER_섹션명] 자리를 만들어주세요
+${bookInfoPrompt}
 
 ${userPrompt ? `추가 요청사항: ${userPrompt}` : ''}`;
 
@@ -758,7 +808,7 @@ ${userPrompt ? `추가 요청사항: ${userPrompt}` : ''}`;
         const userPrompt = document.getElementById('promptInput').value;
         const selectedRoles = Object.values(this.selectedRoles).filter(role => role !== null);
 
-        let roleText = '📖 전문 서평가';
+        let roleText = '전문 서평가';
         if (selectedRoles.length > 0) {
             const roleTexts = selectedRoles.map(role => {
                 const btn = document.querySelector(`[data-role="${role}"]`);
@@ -770,23 +820,31 @@ ${userPrompt ? `추가 요청사항: ${userPrompt}` : ''}`;
         // 섹션별로 이미지와 텍스트 그룹핑
         const sectionData = this.groupImagesBySection(imageDataWithTexts);
 
-        let fallbackReview = `## 📚 ${roleText} 관점에서의 서평
+        // 책 정보 활용
+        let bookIntro = '';
+        if (this.bookInfo) {
+            bookIntro = `${this.bookInfo.author}의 『${this.bookInfo.title}』은 ${this.bookInfo.publisher}에서 출간된 도서입니다. ${this.bookInfo.description.substring(0, 100)}...`;
+        } else {
+            bookIntro = this.generateNaturalText(sectionData.intro, 'intro');
+        }
 
-업로드해주신 책 사진에서 텍스트를 추출했습니다! 🌟
+        let fallbackReview = `## ${roleText} 관점에서의 서평
 
-## 📖 책 소개
+업로드해주신 책 사진에서 텍스트를 추출했습니다!
+
+## 책 소개
 [IMAGE_PLACEHOLDER_intro]
-${this.generateNaturalText(sectionData.intro, 'intro')}
+${bookIntro}
 
-## 📋 구성
+## 구성
 [IMAGE_PLACEHOLDER_structure]
 ${this.generateNaturalText(sectionData.structure, 'structure')}
 
-## ✨ 흥미로웠던 점
+## 흥미로웠던 점
 [IMAGE_PLACEHOLDER_content]
 ${this.generateNaturalText(sectionData.content, 'content')}
 
-## 🎯 총평
+## 총평
 [IMAGE_PLACEHOLDER_conclusion]
 ${this.generateNaturalText(sectionData.conclusion, 'conclusion')}
 

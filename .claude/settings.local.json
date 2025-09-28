@@ -11,7 +11,9 @@
       "Bash(del:*)",
       "Bash(git stash:*)",
       "Bash(git checkout:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add book search functionality and improve security\n\n- Add book title input and Naver book search API integration\n- Remove exposed API keys from codebase\n- Add config.js.example template for secure setup  \n- Add comprehensive .gitignore for security\n- Create README.md with setup instructions\n- Add book information display UI\n- Implement image controls panel with individual copy buttons\n- Update color scheme to solid #d5eaf0 \n- Remove emojis for cleaner interface\n- Add hashtag separator with --- line\n- Improve responsive design for mobile\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

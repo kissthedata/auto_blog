@@ -1,0 +1,70 @@
+// Node.js + Express 서버 예시
+// 이 파일은 네이버 북 API를 프록시하는 백엔드 서버 예시입니다.
+
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const fetch = require('node-fetch'); // npm install node-fetch@2
+
+const app = express();
+const port = 3000;
+
+// 설정 (실제로는 환경변수 사용 권장)
+const NAVER_CLIENT_ID = 'YOUR_NAVER_CLIENT_ID';
+const NAVER_CLIENT_SECRET = 'YOUR_NAVER_CLIENT_SECRET';
+
+// 미들웨어
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname)));
+
+// 네이버 북 검색 API 프록시
+app.post('/api/naver-book-search', async (req, res) => {
+    try {
+        const { query } = req.body;
+
+        if (!query) {
+            return res.status(400).json({ error: '검색 쿼리가 필요합니다.' });
+        }
+
+        const naverApiUrl = `https://openapi.naver.com/v1/search/book.json?query=${encodeURIComponent(query)}&display=5`;
+
+        const response = await fetch(naverApiUrl, {
+            method: 'GET',
+            headers: {
+                'X-Naver-Client-Id': NAVER_CLIENT_ID,
+                'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`네이버 API 오류: ${response.status}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+
+    } catch (error) {
+        console.error('네이버 책 검색 오류:', error);
+        res.status(500).json({
+            error: '책 검색 중 오류가 발생했습니다.',
+            details: error.message
+        });
+    }
+});
+
+// 기본 라우트
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.listen(port, () => {
+    console.log(`서버가 http://localhost:${port} 에서 실행 중입니다.`);
+    console.log('네이버 개발자 센터에서 Client ID와 Secret을 발급받아 설정하세요.');
+});
+
+// 사용법:
+// 1. npm install express cors node-fetch@2
+// 2. 네이버 개발자 센터에서 API 키 발급
+// 3. NAVER_CLIENT_ID, NAVER_CLIENT_SECRET 값 설정
+// 4. node server.js 실행
